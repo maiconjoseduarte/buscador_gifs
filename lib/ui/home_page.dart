@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:buscador_gifs/ui/gif_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -11,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String _search;
+  late String _search = '';
   int _offset = 0;
 
   Future<Map> _getGifs() async {
@@ -116,13 +117,18 @@ class _HomePageState extends State<HomePage> {
       ),
       itemCount: _getCount(snapshot.data["data"]),
       itemBuilder: (context, index) {
-        if (_search.isEmpty || index < snapshot.data["data"].length) {
+        if (_search == null || index < snapshot.data["data"].length) {
           return GestureDetector(
             child: Image.network(
               snapshot.data["data"][index]["images"]["fixed_height"]["url"],
               height: 300,
               fit: BoxFit.cover,
             ),
+            onTap: (){
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GifPage(snapshot.data["data"][index]))
+              );
+            },
           );
         } else {
           return Container(
